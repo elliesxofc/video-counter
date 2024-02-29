@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Video Stats</title>
+    <link href="../../css/video1.css" rel="stylesheet"/>
+    <link href="../../odometer.css" rel="stylesheet"/>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet'>
+    <script src="../../odometer.js"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <script src="https://code.highcharts.com/10.3.3/highcharts.js"></script>
+  </head>
+
+  <body>
+    <div>
+      <img id="pfp" class="thumbnail">
+      <span id="name" class="videoName" onclick="search()">Loading...</span>
+    </div>
+    <div class="counters">
+      <span class="text1">Views <span id="api" class="odometer api">0</span></span>
+      <span class="odometer viewCount" id="views">0</span>
+      <br>
+      <span class="text2">Likes</span>
+      <span id="likes" class="odometer likeCount">0</span>
+    </div>
+  </body>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    var id = urlParams.get("id") || "";
+    var count = 0;
+
+    fetch(`https://mixerno.space/api/youtube-video-counter/user/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        document.getElementById("name").textContent = data.user[0].count;
+        document.getElementById("pfp").src = data.user[1].count;
+      });
+
+      function data() {
+      fetch(`https://mixerno.space/api/youtube-video-counter/user/${id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          count = data.counts[0].count;
+          count2 = data.counts[3].count;
+          count3 = data.counts[2].count;
+        });
+    }
+    function render() {
+      document.getElementById("views").innerHTML = count;
+      document.getElementById("likes").innerHTML = count2;
+      document.getElementById("api").innerHTML = count3;
+    }
+
+    setInterval(() => {
+      data();
+      render();
+    }, 2000);
+
+
+    function search() {
+  const prompt = window.prompt("Enter video Name, ID, or URL.");
+  if (prompt) {
+    fetch(`https://livecounts.xyz/api/youtube-live-view-count/search/${prompt}`)
+      .then((res) => res.json())
+      .then((data) => {
+        window.location.href = "?id=" + data.results[0].id;
+        idName = data.results[0].id;
+        genGraph();
+      });
+  }
+};
+  </script>
+</html>
