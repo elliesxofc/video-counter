@@ -1,0 +1,65 @@
+body {
+  background-color: black;
+  font-family: "Roboto medium";
+  font-weight: 500;
+  color: white;
+}
+
+.odometer {
+  font-family: "Roboto medium";
+  font-weight: 500;
+  color: white;
+}
+
+.thumbnail {
+  height: 40px;
+  width: 70px;
+  border-radius: 5px;
+  margin: 5px;
+}
+
+.videoName {
+  position: absolute;
+  font-size: 35px;
+  margin-left: 3px;
+  margin-top: -1px!important;
+  font-family: "open sans";
+  color: rgb(200, 200, 200);
+}
+
+.counters {
+  margin: 5px;
+  position: absolute;
+  text-align: left;
+}
+
+.text1 {
+  font-size: 30px;
+  position: absolute;
+  color: rgb(255, 255, 100);
+}
+
+.api {
+  margin-left: 10px;
+  position: fixed;
+  color: white;
+}
+
+.viewCount {
+  position: absolute;
+  font-size: 100px;
+  margin-top: 40px;
+}
+
+.text2 {
+  font-size: 30px;
+  position: absolute;
+  margin-top: 0px;
+  color: rgb(100, 255, 100);
+}
+
+.likeCount {
+  font-size: 100px;
+  position: absolute;
+  margin-top: 40px;
+}
