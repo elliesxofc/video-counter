@@ -47,6 +47,19 @@
           count = data.counts[0].count;
           count2 = data.counts[2].count;
           count3 = data.counts[4].count;
+          
+
+      function data() {
+      fetch(`https://mixerno.space/api/youtube-video-counter/user/${id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          count = data.counts[0].count;
+          count2 = data.counts[3].count;
+          count3 = data.counts[2].count;
+        });
+    }
+    
 
           if (viewersGraph.series[0].points.length >= 3600)
 					viewersGraph.series[0].data[0].remove();
