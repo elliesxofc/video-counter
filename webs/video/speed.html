@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script  type="text/javascript" src="https://codesandbox.io/public/sse-hooks/sse-hooks.e15ace8ccace5398a721ffec81f121de.js"></script>
+    <script  type="text/javascript" src="https://codesandbox.io/static/js/banner.d9cb10a38.js"></script>
+
+    <meta charset="UTF-8" />
+    <title>Download Speed</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/odometer/themes/odometer-theme-default.css"
+    />
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: #000000;
+        color: #fff;
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+      }
+      .odometer {
+        font-size: 36px;
+        font-weight: 800;
+        margin: 10px;
+        color: #fff;
+      }
+      .speed-unit {
+        font-size: 20px;
+        vertical-align: text-bottom;
+        margin-left: -13px;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="speed">
+      <span class="odometer" id="odometer-value">0</span>
+      <span class="speed-unit">KB/s</span>
+    </h1>
+    <script src="https://cdn.jsdelivr.net/npm/odometer/odometer.js"></script>
+    <script>
+      let xhr = new XMLHttpRequest();
+      let startTime, endTime;
+      let fileSize = 1024 * 1024; //1 MB
+
+      function downloadFile() {
+        xhr.open("GET", "/download", true);
+        xhr.responseType = "blob";
+        xhr.send();
+
+        startTime = performance.now();
+      }
+
+      xhr.onloadend = function () {
+        endTime = performance.now();
+        let fileSize = xhr.response.size;
+        let downloadSpeed = (fileSize / (endTime - startTime)) * 1000;
+        let kilobytesPerSecond =
+          downloadSpeed / ((1024 * 1024) / (1024 * 1024));
+        document.getElementById("odometer-value").innerHTML =
+          parseInt(kilobytesPerSecond);
+        setTimeout(downloadFile, 5000);
+      };
+
+      downloadFile();
+    </script>
+    <script src="script.js"></script>
+    <script crossorigin type="text/javascript" src="https://codesandbox.io/static/js/watermark-button.eeb14a97b.js"></script>
+  </body>
+</html>
