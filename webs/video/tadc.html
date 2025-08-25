@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="../../../0/odometer.css" rel="stylesheet">
+  <script src="../../../0/odometer.js"></script>
+  <style>
+    body{background-color: black;font-family: "roboto medium";font-weight:500;color: white;}
+    .names-card{margin-top: -108px; margin-left: 118px;}
+    .vid-card{margin-top: -92px;margin-left: 140px;}
+    .chan-viewscard{float: right;text-align: center;margin-right: 10px;margin-top: -82px;}
+    .mar{margin:10px}
+    .chan-main{height: 480px;width:920px;border:solid 2px rgba(255,255,255,0.5);border-radius: 12px;margin: 10px;}
+    .vid-main{border:solid 2px rgba(255,255,255,0.5);height: 550px;width:920px;margin: 10px;border-radius: 12px;}
+    .vid-counts{margin-top: 15px;;}
+    .chan-counts{margin-top: 15px;text-align: center;}
+    .chan-pfp{height: 94px;width:94px;border-radius: 12px;margin: 10px;}
+    .chan-name{font-size:34px}
+    .chan-handle{font-size: 20px}
+    .chan-created{font-size: 16px; margin-top: 5px;color: yellow}
+    .view-count{font-size: 24px;;}
+    .vid-pfp{height: 74px; width:118px;margin: 10px; border-radius: 12px;}
+    .vid-name{font-size: 24px;width: 900px!important;overflow: hidden;height: 26px!important;}
+    .vid-handle{font-size: 18px;}
+    .vid-created{font-size: 18px;color: yellow;}
+    .vid-v-txt{font-size: 30px;margin-top: 30px;margin-left: 10px; color: rgb(150, 187, 255)}
+    .vid-l-txt{font-size: 30px;margin-top: 30px;margin-left: 10px; color: rgb(150, 255, 155)}
+    .vid-c-txt{font-size: 18px; color:rgb(188, 116, 255);margin-left: 10px;margin-top:5px;}
+    .vid-c1{font-size: 118px; margin-top: 5px;margin-left: 10px;;}
+    .vid-c2{font-size:118px; margin-top:5px;margin-left: 10px;;}
+    .vid-c3{font-size: 46px; margin-top: 5px; margin-left: 10px;;}
+    .chan-c1{font-size: 158px; margin-top: 10px;margin-left: 10px;}
+    .chan-s-txt{font-size:32px; margin-top: 30px!important;}
+    .chan-gc1{font-size: 24px;color: lime}
+  </style>
+</head>
+
+<body>
+  <div class="mar">
+    <div class="chan-main">
+      <div>
+        <img class="chan-pfp">
+        <div class="names-card">
+         <div class="chan-name">
+           <span class="chan-name" onclick="search()">Loading...</span>
+         </div>
+          <div>
+            <span class="chan-handle" onclick="search()">Loading handle...</span>
+            <div class="chan-created">
+              <span>Channel Created At: Loading...</span>
+            </div>
+          </div>
+        </div>
+        <div class="chan-viewscard">
+          <span>Total Channel Views</span>
+          <div>
+            <span class="odometer view-count">123,456,789,101,213,145</span>
+          </div>
+        </div>
+      </div>
+      <div class="chan-counts">
+        <span class="odometer chan-c1">123,456,789</span>
+        <div class="chan-s-txt">
+          <span class="chan-s-txt">Subscribers</span>
+          <div>
+            <span class="chan-gc1" id="gains">Gains</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="vid-main">
+      <div>
+        <img class="vid-pfp" id="pfp">
+        <div class="vid-card">
+          <span class="vid-name" id="name">Video Name...</span>
+          <div>
+            <span class="vid-handle" id="handle">@123456789</span>
+            <div>
+              <span class="vid-created" id="created">Video Uploaded On: Loading....</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="vid-counts">
+        <span class="vid-v-txt">Total Views</span>
+        <div>
+          <span class="odometer vid-c1" id="c1">1,234,567,890</span>
+        </div>
+        <div>
+          <span class="vid-l-txt">Total Likes</span>
+          <div>
+            <span class=" odometer vid-c2" id="c2">1,234,567,890</span>
+          </div>
+        </div>
+        <div>
+          <span class="vid-c-txt">Total Comments:</span>
+          <div>
+            <span class="odometer vid-c3" id="c3">1,234,567,890</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="hiddenCanvas" style="display:none;"></canvas>
+
+  <script>
+  const urlParams = new URLSearchParams(window.location.search);
+  var id = urlParams.get("id") || "UCVKChdTNU4tiSVv0-HL3J3w";
+  var count = 0, count1 = 0, count2 = 0, subs = 0, chanViews = 0;
+  var publishedDate = null, chanCreated = null;
+
+  function formatDate(date) {
+    const options = {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
+                     hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short'};
+    return date.toLocaleString(undefined, options);
+  }
+
+  // Color Extractor
+  function extractAccentColor(img, callback) {
+    const canvas = document.getElementById("hiddenCanvas");
+    const ctx = canvas.getContext("2d");
+
+    img.crossOrigin = "Anonymous";
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+
+      const data = ctx.getImageData(0, 0, img.width, img.height).data;
+      let colors = [];
+
+      for (let i = 0; i < data.length; i += 40) {
+        let r = data[i], g = data[i+1], b = data[i+2];
+        let max = Math.max(r,g,b), min = Math.min(r,g,b);
+        let l = (max + min) / 2; 
+        let s = max === min ? 0 : (l > 127 ? (max-min)/(510-max-min) : (max-min)/(max+min));
+
+        if (l > 235 || l < 45) continue;  
+        if (s < 0.15) continue; 
+
+        colors.push([r,g,b]);
+      }
+
+      if (!colors.length) return callback("#888");
+
+      let avg = colors.reduce((a,c)=>[a[0]+c[0], a[1]+c[1], a[2]+c[2]],[0,0,0])
+                       .map(v=>Math.round(v/colors.length));
+      callback(`rgb(${avg[0]},${avg[1]},${avg[2]})`);
+    };
+  }
+
+  // Channel
+  function fetchChannelInfo(channelId) {
+    fetch(`https://subscribercount.app/api/get?platform=youtube&type=channel&id=${channelId}`)
+      .then(res => res.json())
+      .then(data => {
+        subs = data.estSubCount || 0;
+        chanViews = data.estViewCount || 0;
+
+        document.querySelector(".chan-name").textContent = data.snippet.title;
+        document.querySelector(".chan-handle").textContent = "" + data.snippet.customUrl;
+        const chanImg = document.querySelector(".chan-pfp");
+        chanImg.src = data.snippet.thumbnails.default.url;
+        chanCreated = new Date(data.snippet.publishedAt);
+        document.querySelector(".chan-created span").textContent = "Channel Created At: " + formatDate(chanCreated);
+
+        document.querySelector(".chan-c1").textContent = subs.toLocaleString();
+        document.querySelector(".view-count").textContent = chanViews.toLocaleString();
+
+        // apply accent color
+        extractAccentColor(chanImg, (color) => {
+          document.querySelector(".chan-main").style.borderColor = color;
+          document.querySelector(".chan-name").style.color = color;
+          document.querySelector(".chan-handle").style.color = color;
+        });
+      })
+      .catch(err => console.error("Channel fetch error:", err));
+  }
+
+  // Video
+  function fetchVideoInfo(videoId) {
+    fetch(`https://subscribercount.app/api/get?platform=youtube&type=video&id=${videoId}`)
+      .then(res => res.json())
+      .then(data => {
+        count = data.estViewCount || 0;
+        count1 = data.total.likes || 0;
+        count2 = data.total.comments || 0;
+
+        const vidImg = document.getElementById("pfp");
+        vidImg.src = data.snippet.thumbnails.default.url;
+        document.getElementById("name").textContent = data.snippet.title;
+        document.getElementById("handle").textContent = "Uploaded By: " + data.snippet.channelTitle + " Id: " + data.snippet.channelId;
+        publishedDate = new Date(data.snippet.publishedAt);
+        document.getElementById("created").textContent = "Video Uploaded On: " + formatDate(publishedDate);
+
+        // apply accent color
+        extractAccentColor(vidImg, (color) => {
+          document.querySelector(".vid-main").style.borderColor = color;
+          document.getElementById("name").style.color = color;
+          document.getElementById("handle").style.color = color;
+        });
+      })
+      .catch(err => console.error("Video fetch error:", err));
+  }
+
+  function render() {
+    document.getElementById("c1").innerHTML = count.toLocaleString();
+    document.getElementById("c2").innerHTML = count1.toLocaleString();
+    document.getElementById("c3").innerHTML = count2.toLocaleString();
+  }
+
+  function render2() {
+    if (publishedDate) {
+      let now = new Date();
+      let diff = now - publishedDate;
+      let seconds = Math.floor(diff / 1000) % 60;
+      let minutes = Math.floor(diff / (1000 * 60)) % 60;
+      let hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
+      let days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+      document.getElementById("days").innerHTML = days.toString().padStart(2, '0');
+      document.getElementById("hours").innerHTML = hours.toString().padStart(2, '0');
+      document.getElementById("minutes").innerHTML = minutes.toString().padStart(2, '0');
+      document.getElementById("seconds").innerHTML = seconds.toString().padStart(2, '0');
+    }
+  }
+
+  let subsHistory = [];
+
+function recordSubs() {
+  const now = Date.now();
+  subsHistory.push({ time: now, value: subs });
+
+  // keep only last 24h of data
+  const cutoff = now - (24 * 60 * 60 * 1000);
+  subsHistory = subsHistory.filter(entry => entry.time >= cutoff);
+}
+
+function calcGain(durationMs) {
+  const now = Date.now();
+  const cutoff = now - durationMs;
+  const recent = subsHistory.filter(e => e.time >= cutoff);
+  if (recent.length < 2) return 0;
+
+  const oldest = recent[0].value;
+  const latest = recent[recent.length - 1].value;
+  return latest - oldest;
+}
+
+function renderSubsGains() {
+  const daily = calcGain(24 * 60 * 60 * 1000);
+  const hourly = calcGain(60 * 60 * 1000);
+  const minutely = calcGain(60 * 1000);
+
+  document.getElementById("gains").textContent =
+    `+${daily} today | +${hourly} last hour | +${minutely} last min`;
+}
+
+  // Loop
+  setInterval(() => {
+    fetchVideoInfo(id);
+    fetchChannelInfo(id);
+    render();
+  }, 5000);
+
+  setInterval(() => {
+    render2();
+  }, 1200);
+  
+
+  // Search box
+  function search() {
+    const prompt = window.prompt("Enter channel Name, ID, or URL.");
+    if (prompt) {
+      fetch(`https://livecounts.xyz/api/youtube-live-subscriber-count/search/${prompt}`)
+        .then((res) => res.json())
+        .then((data) => {
+          window.location.href = "?id=" + data.results[0].id;
+        });
+    }
+  }
+  </script>
+</body>
+</html>
