@@ -39,16 +39,13 @@
         const res = await fetch(`https://mixerno.space/api/youtube-stream-counter/user/${id}`);
         const data = await res.json();
 
-        // Leave this in for now — open DevTools > Console and check the shape
-        // of `data`, then tell me the real key/index names so I can lock these in.
-        console.log("stream-counter response:", data);
+        // Each entry in data.counts looks like { value: 'viewers'|'goal'|'likes'|'dislikes'|'views', count: '...' }
+        // Matching on `value` instead of a fixed index so this doesn't break if the API reorders the array.
+        const findCount = (key) => Number(data?.counts?.find((c) => c.value === key)?.count ?? 0);
 
-        // Best-guess mapping based on mixerno.space's own display order
-        // (Viewers, Likes, Dislikes, Views). Adjust once you've confirmed
-        // the real indices from the console log above.
-        const viewers = data?.counts?.[0]?.count ?? 0;
-        const likes   = data?.counts?.[1]?.count ?? 0;
-        const views   = data?.counts?.[3]?.count ?? 0;
+        const viewers = findCount("viewers");
+        const likes   = findCount("likes");
+        const views   = findCount("views");
         const name    = data?.user?.[0]?.name ?? data?.user?.[0]?.username ?? "";
 
         document.getElementById("viewers").innerHTML = viewers;
