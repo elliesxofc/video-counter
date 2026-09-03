@@ -6,22 +6,24 @@
     <link href="../../odometer.css" rel="stylesheet"/>
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
     <link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet'>
-    <script src="../../odometer.js"></script>
+    <script src="https://gnzzy7.github.io/assets/odo.js"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
   </head>
 
   <body>
-    <div class="card1">
-     <iconify-icon icon="mdi:eye" style="color: rgb(5, 143, 255); font-size: 45px;"></iconify-icon>
-      <span class="odometer count1" id="viewers">0</span>
-    </div>
-    <div class="card2">
-      <iconify-icon icon="mdi:like" style="color: #7f7; font-size: 45px;"></iconify-icon>
-      <span class="odometer count2" id="likes">0</span>
-    </div>
-    <div class="card3">
-      <iconify-icon icon="icon-park-solid:people" style="color: rgb(179, 0, 137); font-size: 45px;"></iconify-icon>
-      <span class="odometer count3" id="views">0</span>
+    <div class="stats-row">
+      <div class="card1">
+       <iconify-icon icon="mdi:eye" style="color: rgb(5, 143, 255); font-size: 45px;"></iconify-icon>
+        <span class="odometer count1" id="viewers">0</span>
+      </div>
+      <div class="card2">
+        <iconify-icon icon="mdi:like" style="color: #7f7; font-size: 45px;"></iconify-icon>
+        <span class="odometer count2" id="likes">0</span>
+      </div>
+      <div class="card3">
+        <iconify-icon icon="icon-park-solid:people" style="color: rgb(179, 0, 137); font-size: 45px;"></iconify-icon>
+        <span class="odometer count3" id="views">0</span>
+      </div>
     </div>
     <div class="card4">
       <h1 class="user-name" id="name" onclick="search()">Loading... please click here to search up any video or livestream.</h1>
@@ -61,6 +63,18 @@
       updateStats();
       setInterval(updateStats, 2000);
     }
+
+    // Fade the odoUp/odoDown flash color back to normal a moment after
+    // each odometer finishes rolling, so it reads as a flash rather than
+    // a color that gets stuck until the next change.
+    ["viewers", "likes", "views"].forEach((elementId) => {
+      const el = document.getElementById(elementId);
+      el.addEventListener("odometerdone", () => {
+        setTimeout(() => {
+          el.classList.remove("odoUp", "odoDown", "odometer-animating-up", "odometer-animating-down");
+        }, 600);
+      });
+    });
 
     function search() {
       const query = window.prompt("Enter stream Name, ID, or URL.");
