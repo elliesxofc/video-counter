@@ -3,7 +3,7 @@
 <html>
   <head>
     <link href="../../css/stream1.css" rel="stylesheet"/>
-    <link href="../../odometer.css" rel="stylesheet"/>
+    <link href="../../css/colored_2.css" rel="stylesheet"/>
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
     <link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet'>
     <script src="https://gnzzy7.github.io/assets/odo.js"></script>
@@ -50,6 +50,9 @@
         const views   = findCount("views");
         const name    = data?.user?.[0]?.name ?? data?.user?.[0]?.username ?? "";
 
+        // Just set the value — odo.js adds odometer-animating-up/-down as the
+        // value changes, and colored_2.css's @keyframes handle the roll and
+        // the color flash (and its return to the base color) on their own.
         document.getElementById("viewers").innerHTML = viewers;
         document.getElementById("likes").innerHTML = likes;
         document.getElementById("views").innerHTML = views;
@@ -63,18 +66,6 @@
       updateStats();
       setInterval(updateStats, 2000);
     }
-
-    // Fade the odoUp/odoDown flash color back to normal a moment after
-    // each odometer finishes rolling, so it reads as a flash rather than
-    // a color that gets stuck until the next change.
-    ["viewers", "likes", "views"].forEach((elementId) => {
-      const el = document.getElementById(elementId);
-      el.addEventListener("odometerdone", () => {
-        setTimeout(() => {
-          el.classList.remove("odoUp", "odoDown", "odometer-animating-up", "odometer-animating-down");
-        }, 600);
-      });
-    });
 
     function search() {
       const query = window.prompt("Enter stream Name, ID, or URL.");
