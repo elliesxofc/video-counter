@@ -7,24 +7,24 @@ body {
 
 .count1 {
   font-size: 50px;
-  margin-left: 2px;
+  margin-left: 5px;
 }
 
 .count2 {
   font-size: 50px;
-  margin-left: 2px;
+  margin-left: 5px;
 }
 
 .count3 {
   font-size: 50px;
-  margin-left: 2px;
+  margin-left: 5px;
 }
 
 .stats-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 50px;
   margin-top: 0px;
 }
 
@@ -35,16 +35,13 @@ body {
   margin-top: 0px;
 }
 
-.odometer {
-  transition: color 0.4s ease;
-}
-
-.odometer.odoUp {
-  color: #7fff7f;
-}
-
-.odometer.odoDown {
-  color: #ff7f7f;
+/* colored_2.css drives the roll speed and flash color via CSS variables on
+   body (--odoSpeed, --colorSpeed, --upColor, --downColor). Overridden here,
+   scoped to our counters, so a full flash+roll finishes well inside our 2s
+   poll interval and can't overlap with the next update. */
+.stats-row {
+  --odoSpeed: 0.6s;
+  --colorSpeed: 0.8s;
 }
 
 .gr {
@@ -92,7 +89,7 @@ body {
 }
 
 .card4 {
-  margin: 1px 0px;
+  margin: 5px 0px;
 }
 
 .searchbar {
